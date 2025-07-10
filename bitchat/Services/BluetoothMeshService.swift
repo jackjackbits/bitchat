@@ -2238,18 +2238,49 @@ class BluetoothMeshService: NSObject {
             }
         }
     }
+    
+    private func handleBluetoothPoweredOff(showSystemMessage: Bool = true) {
+        if let vm = delegate as? ChatViewModel {
+            DispatchQueue.main.async {
+                vm.isConnected = false
+                vm.connectedPeers.removeAll()
+                
+                if showSystemMessage {
+                    let systemMessage = BitchatMessage(
+                        sender: "system",
+                        content: "Bluetooth is turned off. Please enable Bluetooth to connect with other users.",
+                        timestamp: Date(),
+                        isRelay: false
+                    )
+                    vm.messages.append(systemMessage)
+                }
+            }
+        }
+    }
 }
 
 extension BluetoothMeshService: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         // Central manager state updated
-        if central.state == .poweredOn {
+        switch central.state {
+        case .poweredOn:
             startScanning()
             
             // Send announces when central manager is ready
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                 self?.sendBroadcastAnnounce()
             }
+        case .poweredOff:
+            handleBluetoothPoweredOff()
+        case .unauthorized:
+            // Bluetooth permission denied or restricted
+            if let vm = delegate as? ChatViewModel {
+                DispatchQueue.main.async {
+                    vm.checkBluetoothPermissionAndStartServices()
+                }
+            }
+        default:
+            break
         }
     }
     
@@ -2590,6 +2621,17 @@ extension BluetoothMeshService: CBPeripheralManagerDelegate {
             // Send announces when peripheral manager is ready
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                 self?.sendBroadcastAnnounce()
+            }
+        case .poweredOff:
+            // Only show message if not already shown by central manager
+            let showMessage = (delegate as? ChatViewModel)?.messages.last?.content != "Bluetooth is turned off. Please enable Bluetooth to connect with other users."
+            handleBluetoothPoweredOff(showSystemMessage: showMessage)
+        case .unauthorized:
+            // Bluetooth permission denied or restricted
+            if let vm = delegate as? ChatViewModel {
+                DispatchQueue.main.async {
+                    vm.checkBluetoothPermissionAndStartServices()
+                }
             }
         default:
             break
