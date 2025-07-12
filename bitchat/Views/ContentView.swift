@@ -27,7 +27,8 @@ struct ContentView: View {
     @State private var showCommandSuggestions = false
     @State private var commandSuggestions: [String] = []
     @State private var showLeaveChannelAlert = false
-    
+    @State private var showEmergencyWipeAlert = false
+
     private var backgroundColor: Color {
         colorScheme == .dark ? Color.black : Color.white
     }
@@ -323,13 +324,21 @@ struct ContentView: View {
                         .foregroundColor(textColor)
                         .onTapGesture(count: 3) {
                             // PANIC: Triple-tap to clear all data
-                            viewModel.panicClearAllData()
+                            showEmergencyWipeAlert = true
                         }
                         .onTapGesture(count: 1) {
                             // Single tap for app info
                             showAppInfo = true
                         }
-                    
+                        .alert("Emergency Wipe", isPresented: $showEmergencyWipeAlert) {
+                            Button("Cancel", role: .cancel) { }
+                            Button("Clear", role: .destructive) {
+                                viewModel.panicClearAllData()
+                            }
+                        } message: {
+                            Text("Are you sure you want to clear all data?")
+                        }
+
                     HStack(spacing: 0) {
                         Text("@")
                             .font(.system(size: 14, design: .monospaced))
@@ -338,6 +347,8 @@ struct ContentView: View {
                         TextField("nickname", text: $viewModel.nickname)
                             .textFieldStyle(.plain)
                             .font(.system(size: 14, design: .monospaced))
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
                             .frame(maxWidth: 100)
                             .foregroundColor(textColor)
                             .onChange(of: viewModel.nickname) { _ in
