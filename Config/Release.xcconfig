@@ -1,0 +1,6 @@
+// Release configuration settings  
+// Includes base settings and allows for local overrides
+
+#include "Base.xcconfig"
+
+// Release-specific settings can be added here

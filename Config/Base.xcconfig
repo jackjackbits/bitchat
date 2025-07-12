@@ -1,0 +1,22 @@
+// Base configuration settings for bitchat
+// These are the default values used by all targets and configurations
+
+// Default development team (both iOS and macOS)
+DEVELOPMENT_TEAM = L3N5LHJD5Y
+
+// Default bundle identifiers
+PRODUCT_BUNDLE_IDENTIFIER = chat.bitchat
+PRODUCT_BUNDLE_IDENTIFIER_TESTS = chat.bitchat.tests
+PRODUCT_BUNDLE_IDENTIFIER_SHARE_EXTENSION = chat.bitchat.ShareExtension
+APP_GROUP = group.chat.bitchat
+
+// To override these settings locally:
+// 1. Create "Local.xcconfig" in this Config directory
+// 2. Add your custom settings, for example:
+//    DEVELOPMENT_TEAM = YOUR_TEAM_ID
+//    PRODUCT_BUNDLE_IDENTIFIER = com.yourname.bitchat
+//
+// The Local.xcconfig file will be ignored by git and won't affect other developers
+
+// Include local overrides if they exist
+#include? "Local.xcconfig"
