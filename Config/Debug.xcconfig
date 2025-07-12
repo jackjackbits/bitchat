@@ -1,0 +1,6 @@
+// Debug configuration settings
+// Includes base settings and allows for local overrides
+
+#include "Base.xcconfig"
+
+// Debug-specific settings can be added here
