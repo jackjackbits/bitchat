@@ -79,7 +79,7 @@ struct AppInfoView: View {
                     dismiss()
                 }
                 .buttonStyle(.plain)
-                .foregroundColor(textColor)
+                .foregroundStyle(textColor)
                 .padding()
             }
             .background(backgroundColor.opacity(0.95))
@@ -102,7 +102,7 @@ struct AppInfoView: View {
                     Button("DONE") {
                         dismiss()
                     }
-                    .foregroundColor(textColor)
+                    .foregroundStyle(textColor)
                 }
             }
         }
@@ -116,11 +116,11 @@ struct AppInfoView: View {
             VStack(alignment: .center, spacing: 8) {
                 Text(Strings.appName)
                     .font(.system(size: 32, weight: .bold, design: .monospaced))
-                    .foregroundColor(textColor)
+                    .foregroundStyle(textColor)
                 
                 Text(Strings.tagline)
                     .font(.system(size: 16, design: .monospaced))
-                    .foregroundColor(secondaryTextColor)
+                    .foregroundStyle(secondaryTextColor)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical)
@@ -185,7 +185,7 @@ struct AppInfoView: View {
                     }
                 }
                 .font(.system(size: 14, design: .monospaced))
-                .foregroundColor(textColor)
+                .foregroundStyle(textColor)
             }
             
             // Commands
@@ -198,7 +198,7 @@ struct AppInfoView: View {
                     }
                 }
                 .font(.system(size: 14, design: .monospaced))
-                .foregroundColor(textColor)
+                .foregroundStyle(textColor)
             }
             
             .padding(.top)
@@ -222,7 +222,7 @@ struct SectionHeader: View {
     var body: some View {
         Text(title)
             .font(.system(size: 16, weight: .bold, design: .monospaced))
-            .foregroundColor(textColor)
+            .foregroundStyle(textColor)
             .padding(.top, 8)
     }
 }
@@ -245,17 +245,17 @@ struct FeatureRow: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 20))
-                .foregroundColor(textColor)
+                .foregroundStyle(textColor)
                 .frame(width: 30)
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                    .foregroundColor(textColor)
+                    .foregroundStyle(textColor)
                 
                 Text(description)
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(secondaryTextColor)
+                    .foregroundStyle(secondaryTextColor)
                     .fixedSize(horizontal: false, vertical: true)
             }
             

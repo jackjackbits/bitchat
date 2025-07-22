@@ -78,7 +78,6 @@ struct BitchatApp: App {
             userDefaults.removeObject(forKey: "sharedContent")
             userDefaults.removeObject(forKey: "sharedContentType")
             userDefaults.removeObject(forKey: "sharedContentDate")
-            userDefaults.synchronize()
             
             // Show notification about shared content
             DispatchQueue.main.async {
@@ -141,7 +140,7 @@ class MacAppDelegate: NSObject, NSApplicationDelegate {
 }
 #endif
 
-class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+@MainActor class NotificationDelegate: NSObject, @preconcurrency UNUserNotificationCenterDelegate {
     static let shared = NotificationDelegate()
     weak var chatViewModel: ChatViewModel?
     
@@ -155,9 +154,7 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
             if let senderName = title.replacingOccurrences(of: "Private message from ", with: "").nilIfEmpty {
                 // Find peer ID and open chat
                 if let peerID = chatViewModel?.getPeerIDForNickname(senderName) {
-                    DispatchQueue.main.async {
-                        self.chatViewModel?.startPrivateChat(with: peerID)
-                    }
+                    self.chatViewModel?.startPrivateChat(with: peerID)
                 }
             }
         }
