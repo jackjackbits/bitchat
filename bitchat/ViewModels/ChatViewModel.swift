@@ -137,6 +137,15 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
     private var peerManager: PeerManager?
     private let userDefaults = UserDefaults.standard
     private let nicknameKey = "bitchat.nickname"
+    private let coverTrafficKey = "bitchat.coverTrafficEnabled"
+
+    @Published var coverTrafficEnabled: Bool = false {
+        didSet {
+            userDefaults.set(coverTrafficEnabled, forKey: coverTrafficKey)
+            userDefaults.synchronize()
+            meshService.setCoverTrafficEnabled(coverTrafficEnabled)
+        }
+    }
     
     // MARK: - Caches
     
@@ -182,6 +191,7 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
         loadFavorites()
         loadBlockedUsers()
         loadVerifiedFingerprints()
+        loadCoverTrafficSetting()
         meshService.delegate = self
         
         // Log startup info
@@ -195,6 +205,7 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
         
         // Start mesh service immediately
         meshService.startServices()
+        meshService.setCoverTrafficEnabled(coverTrafficEnabled)
         
         // Set up message retry service
         MessageRetryService.shared.meshService = meshService
@@ -431,6 +442,14 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
     private func saveBlockedUsers() {
         // Blocked users are now saved automatically in SecureIdentityStateManager
         // This method is kept for compatibility
+    }
+
+    private func loadCoverTrafficSetting() {
+        if userDefaults.object(forKey: coverTrafficKey) != nil {
+            coverTrafficEnabled = userDefaults.bool(forKey: coverTrafficKey)
+        } else {
+            coverTrafficEnabled = false
+        }
     }
     
     
