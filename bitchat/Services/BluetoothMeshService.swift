@@ -642,7 +642,8 @@ class BluetoothMeshService: NSObject {
     
     // Cover traffic for privacy
     private var coverTrafficTimer: Timer?
-    private let coverTrafficPrefix = "☂DUMMY☂"  // Prefix to identify dummy messages after decryption
+    private let coverTrafficPrefix = "☂DUMMYSIG☂b64:"  // Updated: longer, less English, base64-like
+    private let minCoverTrafficLength = 12  // Minimum length of dummy content after prefix
     private var lastCoverTrafficTime = Date()
     
     // MARK: - Connection State
@@ -3670,7 +3671,10 @@ class BluetoothMeshService: NSObject {
                         
                         // Check if this is a dummy message for cover traffic
                         if message.content.hasPrefix(self.coverTrafficPrefix) {
+                            let dummyBody = message.content.dropFirst(self.coverTrafficPrefix.count)
+                            if dummyBody.count >= self.minCoverTrafficLength {
                                 return  // Silently discard dummy messages
+                            }
                         }
                         
                         // Check if this is a favorite/unfavorite notification
@@ -6264,28 +6268,11 @@ extension BluetoothMeshService: CBPeripheralManagerDelegate {
     }
     
     private func generateDummyContent() -> String {
-        // Generate realistic-looking dummy messages
-        let templates = [
-            "hey",
-            "ok",
-            "got it",
-            "sure",
-            "sounds good",
-            "thanks",
-            "np",
-            "see you there",
-            "on my way",
-            "running late",
-            "be there soon",
-            "👍",
-            "✓",
-            "meeting at the usual spot",
-            "confirmed",
-            "roger that"
-        ]
-        
+        // Generate random base64-like string for dummy body
+        let randomBytes = (0..<12).map { _ in UInt8.random(in: 0...255) }
+        let dummyBody = Data(randomBytes).base64EncodedString()
         // Prefix with dummy marker (will be encrypted)
-        return coverTrafficPrefix + (templates.randomElement() ?? "ok")
+        return coverTrafficPrefix + dummyBody
     }
     
     
